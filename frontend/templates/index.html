@@ -12,38 +12,41 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="text-center">Login</h3>
+                        <h3 class="text-center">Iniciar Sesión</h3>
                     </div>
                     <div class="card-body">
                         <form id="login-form">
                             <div class="form-group">
-                                <label for="username">Username</label>
+                                <label for="username">Usuario</label>
                                 <input type="text" class="form-control" id="username" required>
                             </div>
                             <div class="form-group">
-                                <label for="password">Password</label>
+                                <label for="password">Contraseña</label>
                                 <input type="password" class="form-control" id="password" required>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                            <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
                         </form>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="register.html" class="btn btn-link">Register</a>
+                        <a href="register.html" class="btn btn-link">Registrar Usuario</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- cargue de bibliotecas necesarias para el desarrollo del proyecto -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        /* obtencion del forumlario y escucha del evento submit */
         document.getElementById('login-form').addEventListener('submit', function(event) {
             event.preventDefault();
+            /* obtencion de los valores */
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-
+            /* peticion POST a la API */
             fetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -51,19 +54,22 @@
                 },
                 body: JSON.stringify({ username, password })
             })
+            /* manejo de la respuesta, comprobando el token y redirige a la pagina tareas */
             .then(response => response.json())
             .then(data => {
                 if (data.access_token) {
-                    alert('Login successful!');
-                    localStorage.setItem('access_token', data.access_token);  // Almacenar el token si es necesario
-                    window.location.href = '/tasks.html';  // Redirigir a la página de tareas
+                    alert('Inicio de sesión exitosa!');
+                    localStorage.setItem('access_token', data.access_token);  /* Almacenar el token si es necesario */
+                    window.location.href = '/tasks.html';  /* Redirigir a la página de tareas */
                 } else {
-                    alert('Login failed: ' + (data.message || 'Unknown error'));
+                    /* mensaje de error en tal caso */
+                    alert('Error de inicio de sesion: ' + (data.message || 'Unknown error'));
                 }
             })
+            /* en caso de errora al iniciar sesion, lo capturamos y generamos un mensaje para intentar de nuevo */
             .catch(error => {
-                console.error('Error during login:', error);
-                alert('An error occurred. Please try again.');
+                console.error('Error al iniciar sesión:', error);
+                alert('Ocurrió un error. Inténtalo de nuevo.');
             });
         });
     </script>
