@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h3 class="text-center">Task List</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Completed</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="task-table-body">
+                        <!-- Las filas de tareas se agregarán aquí -->
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" onclick="showCreateTaskForm()">Create Task</button>
+            </div>
+        </div>
+        <div id="task-form-container" class="row justify-content-center mt-5" style="display: none;">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center" id="task-form-title">Create Task</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="task-form">
+                            <input type="hidden" id="task-id">
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" class="form-control" id="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="completed">Completed</label>
+                                <input type="checkbox" id="completed">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Save Task</button>
+                            <button type="button" class="btn btn-secondary btn-block" onclick="hideTaskForm()">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('access_token');
+            fetchTasks(token);
+        });
+
+        function fetchTasks(token) {
+            fetch('/api/tasks', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('task-table-body');
+                tableBody.innerHTML = '';  // Clear the table
+                data.forEach(task => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${task.id}</td>
+                        <td>${task.title}</td>
+                        <td>${task.description}</td>
+                        <td>${task.completed ? 'Yes' : 'No'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="editTask(${task.id}, '${task.title}', '${task.description}', ${task.completed})">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteTask(${task.id})">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+        }
+
+        function showCreateTaskForm() {
+            document.getElementById('task-form-title').innerText = 'Create Task';
+            document.getElementById('task-id').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('completed').checked = false;
+            document.getElementById('task-form-container').style.display = 'block';
+        }
+
+        function hideTaskForm() {
+            document.getElementById('task-form-container').style.display = 'none';
+        }
+
+        function editTask(id, title, description, completed) {
+            document.getElementById('task-form-title').innerText = 'Edit Task';
+            document.getElementById('task-id').value = id;
+            document.getElementById('title').value = title;
+            document.getElementById('description').value = description;
+            document.getElementById('completed').checked = completed;
+            document.getElementById('task-form-container').style.display = 'block';
+        }
+
+        document.getElementById('task-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const id = document.getElementById('task-id').value;
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const completed = document.getElementById('completed').checked;
+            const token = localStorage.getItem('access_token');
+
+            if (id) {
+                // Update existing task
+                fetch(`/api/tasks/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ title, description, completed })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Task updated successfully!');
+                    hideTaskForm();
+                    fetchTasks(token);
+                });
+            } else {
+                // Create new task
+                fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ title, description, completed })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Task created successfully!');
+                    hideTaskForm();
+                    fetchTasks(token);
+                });
+            }
+        });
+
+        function deleteTask(id) {
+            const token = localStorage.getItem('access_token');
+            if (confirm('Are you sure you want to delete this task?')) {
+                fetch(`/api/tasks/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                })
+                .then(response => {
+                    alert('Task deleted successfully!');
+                    fetchTasks(token);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
