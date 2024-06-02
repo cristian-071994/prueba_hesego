@@ -1,49 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Registro</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(to bottom, rgb(0, 179, 255), white);
+            min-height: 100vh; /* Ensure the background covers the whole viewport height */
+        }
+    </style>
 </head>
-<body>
+<body class="gradient-bg">
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="text-center">Register</h3>
+                        <h3 class="text-center">Registrar Usuario</h3>
                     </div>
                     <div class="card-body">
                         <form id="register-form">
                             <div class="form-group">
-                                <label for="username">Username</label>
+                                <label for="username">Usuario</label>
                                 <input type="text" class="form-control" id="username" required>
                             </div>
                             <div class="form-group">
-                                <label for="password">Password</label>
+                                <label for="password">Contraseña</label>
                                 <input type="password" class="form-control" id="password" required>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Register</button>
+                            <button type="submit" class="btn btn-primary btn-block">Registrar</button>
                         </form>
                     </div>
                     <div class="card-footer text-center">
-                        <button class="btn btn-secondary" onclick="window.location.href='/'">Back to Login</button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/'">Regresar a inicio de Sesión</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- cargue de bibliotecas necesarias para el desarrollo del proyecto -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        /* obtencion del forumlario y escucha del evento submit */
         document.getElementById('register-form').addEventListener('submit', function(event) {
             event.preventDefault();
+            /* obtencion de los valores */
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            /* peticion POST a la API */
             fetch('/api/register', {
                 method: 'POST',
                 headers: {
@@ -51,13 +61,15 @@
                 },
                 body: JSON.stringify({ username, password })
             })
+            /* manejo de la respuesta, comprobando el token y redirige a la pagina tareas */
             .then(response => response.json())
             .then(data => {
                 if (data.access_token) {
-                    alert('Registration successful!');
-                    window.location.href = '/';  // Redirigir a la página de login
+                    alert('Registro exitoso!');
+                    window.location.href = '/';  /* Redirigir a la página de inicio de sesion */
                 } else {
-                    alert('Registration failed: ' + (data.message || 'Unknown error'));
+                    /* mensaje de error en tal caso */
+                    alert('Registro fallido: ' + (data.message || 'Unknown error'));
                 }
             });
         });

@@ -1,72 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task List</title>
+    <title>Lista de Tareas</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(to bottom, rgb(0, 179, 255), white);
+            min-height: 100vh; /* Ensure the background covers the whole viewport height */
+        }
+    </style>
 </head>
-<body>
-    <div class="container mt-5">
-        <h3 class="text-center">Task List</h3>
+<body class="gradient-bg">
+    <div class="container mt-5 ">
+        <h3 class="text-center">Lista de Tareas</h3>
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <table class="table table-striped">
-                    <thead>
+                    <thead class="text-center">
                         <tr>
                             <th>ID</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Completed</th>
-                            <th>Actions</th>
+                            <th>Titulo</th>
+                            <th>Descripción</th>
+                            <th>Completado</th>
+                            <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody id="task-table-body">
                         <!-- Las filas de tareas se agregarán aquí -->
                     </tbody>
                 </table>
-                <button class="btn btn-primary" onclick="showCreateTaskForm()">Create Task</button>
+                <button class="btn btn-primary" onclick="showCreateTaskForm()">Crear Tarea</button>
+                <div class="card-footer text-center">
+                    <button class="btn btn-secondary" onclick="window.location.href='/'">Cerrar Sesión</button>
+                </div>
             </div>
         </div>
         <div id="task-form-container" class="row justify-content-center mt-5" style="display: none;">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="text-center" id="task-form-title">Create Task</h3>
+                        <h3 class="text-center" id="task-form-title">Crear Tarea</h3>
                     </div>
                     <div class="card-body">
                         <form id="task-form">
                             <input type="hidden" id="task-id">
                             <div class="form-group">
-                                <label for="title">Title</label>
+                                <label for="title">Titulo</label>
                                 <input type="text" class="form-control" id="title" required>
                             </div>
                             <div class="form-group">
-                                <label for="description">Description</label>
+                                <label for="description">Descripción</label>
                                 <textarea class="form-control" id="description" required></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="completed">Completed</label>
+                                <label for="completed">Completado</label>
                                 <input type="checkbox" id="completed">
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Save Task</button>
-                            <button type="button" class="btn btn-secondary btn-block" onclick="hideTaskForm()">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-block">Guardar Tarea</button>
+                            <button type="button" class="btn btn-secondary btn-block" onclick="hideTaskForm()">Cancelar</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <!-- cargue de bibliotecas necesarias para el desarrollo del proyecto -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Interaccion con la API -->
     <script>
+        /* inicializacion y cargue de tareas, ejecutar el codigo al cargar el DOM */
         document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('access_token');
+            const token = localStorage.getItem('access_token');//obtencion del token
             fetchTasks(token);
         });
 
+        /* obtener las tareas */
         function fetchTasks(token) {
             fetch('/api/tasks', {
                 method: 'GET',
@@ -75,9 +88,12 @@
                 }
             })
             .then(response => response.json())
+            /* gestion de la tabla devuelta */
             .then(data => {
                 const tableBody = document.getElementById('task-table-body');
-                tableBody.innerHTML = '';  // Clear the table
+                tableBody.innerHTML = '';  // Limpiar la tabla
+
+                /* recorrer la tarea recibida y crear fila con los datos, anexar botones */
                 data.forEach(task => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -86,8 +102,8 @@
                         <td>${task.description}</td>
                         <td>${task.completed ? 'Yes' : 'No'}</td>
                         <td>
-                            <button class="btn btn-sm btn-info" onclick="editTask(${task.id}, '${task.title}', '${task.description}', ${task.completed})">Edit</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteTask(${task.id})">Delete</button>
+                            <button class="btn btn-sm btn-info" onclick="editTask(${task.id}, '${task.title}', '${task.description}', ${task.completed})">Editar</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteTask(${task.id})">Eliminar</button>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -95,8 +111,9 @@
             });
         }
 
+        /* prepara y muestra el formulario para crear una nueva tarea */
         function showCreateTaskForm() {
-            document.getElementById('task-form-title').innerText = 'Create Task';
+            document.getElementById('task-form-title').innerText = 'Crear Nueva Tarea';
             document.getElementById('task-id').value = '';
             document.getElementById('title').value = '';
             document.getElementById('description').value = '';
@@ -104,12 +121,14 @@
             document.getElementById('task-form-container').style.display = 'block';
         }
 
+        /* oculta el formulario de tareas */
         function hideTaskForm() {
             document.getElementById('task-form-container').style.display = 'none';
         }
 
+        /* Llena el formulario con los datos de la tarea a editar y lo muestra */
         function editTask(id, title, description, completed) {
-            document.getElementById('task-form-title').innerText = 'Edit Task';
+            document.getElementById('task-form-title').innerText = 'Editar Tarea';
             document.getElementById('task-id').value = id;
             document.getElementById('title').value = title;
             document.getElementById('description').value = description;
@@ -117,6 +136,7 @@
             document.getElementById('task-form-container').style.display = 'block';
         }
 
+        /* manejo de las tareas, crear - actualizar */
         document.getElementById('task-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const id = document.getElementById('task-id').value;
@@ -126,7 +146,7 @@
             const token = localStorage.getItem('access_token');
 
             if (id) {
-                // Update existing task
+                // actualizar tarea existente
                 fetch(`/api/tasks/${id}`, {
                     method: 'PUT',
                     headers: {
@@ -137,12 +157,12 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    alert('Task updated successfully!');
+                    alert('Tarea actualizada exitosamente!');
                     hideTaskForm();
                     fetchTasks(token);
                 });
             } else {
-                // Create new task
+                // Crear nueva tarea
                 fetch('/api/tasks', {
                     method: 'POST',
                     headers: {
@@ -153,16 +173,17 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    alert('Task created successfully!');
+                    alert('Tarea creada exitosamente!');
                     hideTaskForm();
                     fetchTasks(token);
                 });
             }
         });
 
+        /* eliminar tarea */
         function deleteTask(id) {
             const token = localStorage.getItem('access_token');
-            if (confirm('Are you sure you want to delete this task?')) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
                 fetch(`/api/tasks/${id}`, {
                     method: 'DELETE',
                     headers: {
@@ -170,7 +191,7 @@
                     }
                 })
                 .then(response => {
-                    alert('Task deleted successfully!');
+                    alert('Tarea eliminada exitosamente!');
                     fetchTasks(token);
                 });
             }

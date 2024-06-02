@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplicacion Lista de Tareas</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(to bottom, rgb(0, 179, 255), white);
+            min-height: 100vh; /* Ensure the background covers the whole viewport height */
+        }
+    </style>
+    
+
 </head>
-<body>
+<body class="gradient-bg">
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -66,7 +74,7 @@
                     alert('Error de inicio de sesion: ' + (data.message || 'Unknown error'));
                 }
             })
-            /* en caso de errora al iniciar sesion, lo capturamos y generamos un mensaje para intentar de nuevo */
+            /* en caso de error al iniciar sesion, lo capturamos y generamos un mensaje para intentar de nuevo */
             .catch(error => {
                 console.error('Error al iniciar sesión:', error);
                 alert('Ocurrió un error. Inténtalo de nuevo.');
