@@ -9,5 +9,5 @@ ingresar a la carpeta raiz y activar el ambiente virtual
 ingresar en la carpeta raiz y ejecutar el comando 
     pip install -r requirements.txt
 
-ingresar al archivo run.py
+ingresar al archivo run.py y ejecutar el programa
 
