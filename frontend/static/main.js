@@ -1,7 +1,9 @@
+//cargar las tareas en cuanto la pagina este lista
 document.addEventListener("DOMContentLoaded", function () {
     fetchTasks();
 });
 
+//peticion para renderizar todas las tareas, verificando el token
 function fetchTasks() {
     fetch('http://localhost:5000/api/tasks', {
         headers: {
@@ -27,6 +29,7 @@ function fetchTasks() {
     });
 }
 
+//para agregar nuevas tareas
 function addTask() {
     const newTask = document.getElementById('new-task').value;
     fetch('http://localhost:5000/api/tasks', {
@@ -44,6 +47,7 @@ function addTask() {
     });
 }
 
+//cambio de estado de una tarea
 function toggleTask(id, completed) {
     fetch(`http://localhost:5000/api/tasks/${id}`, {
         method: 'PUT',
@@ -59,6 +63,7 @@ function toggleTask(id, completed) {
     });
 }
 
+//eliminar tareas segun su id
 function deleteTask(id) {
     fetch(`http://localhost:5000/api/tasks/${id}`, {
         method: 'DELETE',
