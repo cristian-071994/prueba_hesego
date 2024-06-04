@@ -1,9 +1,13 @@
+#funciones - metodos necesarios en el backend (logica)
+
+#importacion de herramientas requeridas
 from flask_restful import Resource, reqparse
 from app import db
 from app.models import Task, User
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 
+#funcion para la creacion de usuario con contraseña hashada
 def register_user(username, password):
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
     print(f"Hashed password for {username}: {hashed_password}")
@@ -12,6 +16,7 @@ def register_user(username, password):
     db.session.commit()
     return new_user
 
+#funcion para login de usuario, verificacion de credenciales
 def login_user(username, password):
     user = User.query.filter_by(username=username).first()
     if not user:
@@ -31,12 +36,15 @@ def login_user(username, password):
     print(f"User {username} logged in successfully")
     return True
 
+#clase para la gestion de la coleccion de tareas
 class TaskListResource(Resource):
+    #obtener
     @jwt_required()
     def get(self):
         tasks = Task.query.all()
         return [task.to_dict() for task in tasks], 200
 
+    #creacion
     @jwt_required()
     def post(self):
         parser = reqparse.RequestParser()
@@ -54,12 +62,15 @@ class TaskListResource(Resource):
         db.session.commit()
         return new_task.to_dict(), 201
 
+#clase para la gestion de una tarea en especifico
 class TaskResource(Resource):
+    #obtener por id
     @jwt_required()
     def get(self, id):
         task = Task.query.get_or_404(id)
         return task.to_dict(), 200
 
+    #actualizar tarea
     @jwt_required()
     def put(self, id):
         parser = reqparse.RequestParser()
@@ -79,6 +90,7 @@ class TaskResource(Resource):
         db.session.commit()
         return task.to_dict(), 200
 
+    #eliminar tarea
     @jwt_required()
     def delete(self, id):
         task = Task.query.get_or_404(id)
@@ -86,6 +98,7 @@ class TaskResource(Resource):
         db.session.commit()
         return '', 204
 
+#clase para el registro de un nuevo usuario - Registra un nuevo usuario y retorna un token de acceso.
 class UserRegistration(Resource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -101,6 +114,7 @@ class UserRegistration(Resource):
         access_token = create_access_token(identity={'username': data['username']})
         return {'access_token': access_token}, 201
 
+#clase para iniciar sesión y obtener un token de acceso.
 class UserLogin(Resource):
     def post(self):
         parser = reqparse.RequestParser()
