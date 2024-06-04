@@ -1,101 +1,106 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lista de Tareas</title>
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <style>
-      .gradient-bg {
-        background: linear-gradient(to bottom, rgb(0, 179, 255), white);
-        min-height: 100vh; /* Ensure the background covers the whole viewport height */
-      }
+        .gradient-bg {
+            background: linear-gradient(to bottom, rgb(6, 205, 223), white);
+            min-height: 100vh;
+        }
+        .center-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .center-image img {
+            max-width: 150px;
+            border-radius: 15px;
+            height: auto;
+        }
+        @media (max-width: 576px) {
+            .center-image img {
+                max-width: 100px;
+            }
+            .card-footer {
+                text-align: center;
+            }
+            .d-flex {
+                flex-direction: column;
+                align-items: center;
+            }
+            .d-flex input, .d-flex button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
     </style>
-  </head>
-  <body class="gradient-bg">
-    <div class="container mt-5">
-      <h3 class="text-center">Lista de Tareas</h3>
-      <div class="d-flex justify-content-center">
-        <input class="" id="Search" placeholder="Introduce id de tarea" type="text" />
-        <button class="btn btn-sm btn-info">Buscar tarea</button>
-      </div>
+</head>
+<body class="gradient-bg">
+    <div class="container mt-3">
+        <div class="center-image m-2">
+            <img src="../static/logo.png" alt="Logo" />
+        </div>
+        <h3 class="text-center">Lista de Tareas</h3>
+        <div class="d-flex justify-content-center">
+            <input class="m-1" id="Search" placeholder="Introduce id de tarea" type="text" />
+            <button class="btn btn-sm btn-info m-1" onclick="searchTask()">Buscar tarea</button>
+            <button class="btn btn-sm btn-info m-1" onclick="fetchAllTasks()">Ver todas las tareas</button>
+        </div>
 
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <table class="table table-striped">
-            <thead class="text-center">
-              <tr>
-                <th>ID</th>
-                <th>Titulo</th>
-                <th>Descripción</th>
-                <th>Completado</th>
-                <th>Opciones</th>
-              </tr>
-            </thead>
-            <tbody id="task-table-body">
-              <!-- Las filas de tareas se agregarán aquí -->
-            </tbody>
-          </table>
-          <button class="btn btn-primary" onclick="showCreateTaskForm()">
-            Crear Tarea
-          </button>
-          <div class="card-footer text-center">
-            <button
-              class="btn btn-secondary"
-              onclick="window.location.href='/'"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
-        </div>
-      </div>
-      <div
-        id="task-form-container"
-        class="row justify-content-center mt-5"
-        style="display: none"
-      >
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="text-center" id="task-form-title">Crear Tarea</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <table class="table table-striped">
+                    <thead class="text-center">
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Descripción</th>
+                            <th>Completado</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="task-table-body">
+                        <!-- Las filas de tareas se agregarán aquí -->
+                    </tbody>
+                </table>
+                <button class="btn btn-primary mb-2" onclick="showCreateTaskForm()">Crear Tarea</button>
+                <div class="card-footer text-center">
+                    <button class="btn btn-secondary" onclick="window.location.href='/'">Cerrar Sesión</button>
+                </div>
             </div>
-            <div class="card-body">
-              <form id="task-form">
-                <input type="hidden" id="task-id" />
-                <div class="form-group">
-                  <label for="title">Titulo</label>
-                  <input type="text" class="form-control" id="title" required />
-                </div>
-                <div class="form-group">
-                  <label for="description">Descripción</label>
-                  <textarea
-                    class="form-control"
-                    id="description"
-                    required
-                  ></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="completed">Completado</label>
-                  <input type="checkbox" id="completed" />
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">
-                  Guardar Tarea
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary btn-block"
-                  onclick="hideTaskForm()"
-                >
-                  Cancelar
-                </button>
-              </form>
-            </div>
-          </div>
         </div>
-      </div>
+        <div id="task-form-container" class="row justify-content-center mt-5" style="display: none;">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center" id="task-form-title">Crear Tarea</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="task-form">
+                            <input type="hidden" id="task-id" />
+                            <div class="form-group">
+                                <label for="title">Título</label>
+                                <input type="text" class="form-control" id="title" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Descripción</label>
+                                <textarea class="form-control" id="description" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="completed">Completado</label>
+                                <input type="checkbox" id="completed" />
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Guardar Tarea</button>
+                            <button type="button" class="btn btn-secondary btn-block" onclick="hideTaskForm()">Cancelar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- cargue de bibliotecas necesarias para el desarrollo del proyecto -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -146,6 +151,66 @@
               tableBody.appendChild(row);
             });
           });
+      }
+
+      // Función para buscar tarea
+      function searchTask() {
+        const token = localStorage.getItem("access_token");
+        const taskId = document.getElementById("Search").value;
+
+        // Verificar si el ID de la tarea es undefined
+        if (!taskId) {
+          alert("Por favor, introduce un ID de tarea válido.");
+          return; // Salir de la función si el ID de la tarea es undefined
+        }
+
+        //ruta para realizar la peticion
+        const searchUrl = `/api/tasks/${taskId}`;
+
+        fetch(searchUrl, {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+          .then((response) => {
+            if (response.status === 404) {
+              throw new Error("No se encontró ninguna tarea con ese ID.");
+            } else {
+              return response.json();
+            }
+          })
+          .then((data) => {
+            const tableBody = document.getElementById("task-table-body");
+            tableBody.innerHTML = "";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td>${data.id}</td>
+        <td>${data.title}</td>
+        <td>${data.description}</td>
+        <td>${data.completed ? "Yes" : "No"}</td>
+        <td>
+          <button class="btn btn-sm btn-info" onclick="editTask(${data.id}, '${
+              data.title
+            }', '${data.description}', ${data.completed})">Editar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteTask(${
+            data.id
+          })">Eliminar</button>
+        </td>
+      `;
+            tableBody.appendChild(row);
+          })
+          .catch((error) => {
+            console.error("Error al buscar tarea:", error);
+            alert(error.message);
+          });
+      }
+
+      //renderiza todas las tareas nuevamente
+      function fetchAllTasks() {
+        const token = localStorage.getItem("access_token");
+        fetchTasks(token);
       }
 
       /* prepara y muestra el formulario para crear una nueva tarea */

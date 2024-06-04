@@ -7,17 +7,34 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .gradient-bg {
-            background: linear-gradient(to bottom, rgb(0, 179, 255), white);
+            background: linear-gradient(to bottom, rgb(6, 205, 223), white);
             min-height: 100vh; 
         }
-    </style> 
+        .center-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .center-image img {
+            max-width: 150px; /* Ajusta el tamaño de la imagen */
+            border-radius: 15px; /* Bordes redondeados */
+            height: auto;
+        }
 
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 576px) {
+            .card {
+                margin-top: 20px; /* Margen superior adicional en pantallas pequeñas */
+            }
+        }
+    </style> 
 </head>
 <body class="gradient-bg">
-    <div>
-        <img src="/frontend/templates/logo.png" alt="">
-    </div>
-    <div class="container mt-5">
+    <div class="container mt-3">
+        <div class="center-image m-2">
+            <img src="../static/logo.png" alt="Logo">
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
