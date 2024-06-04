@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lista de Tareas</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="icon" href="../static/favicon.ico" type="image/x-icon"><!-- cambio, prueba -->
+    <link rel="icon" href="../static/favicon.ico" type="image/x-icon">
     <style>
         .gradient-bg {
             background: linear-gradient(to bottom, rgb(6, 205, 223), white);
@@ -54,28 +54,30 @@
 
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <table class="table table-striped">
-                    <thead class="text-center">
-                        <tr>
-                            <th>ID</th>
-                            <th>Título</th>
-                            <th>Descripción</th>
-                            <th>Completado</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="task-table-body">
-                        <!-- Las filas de tareas se agregarán aquí -->
-                    </tbody>
-                </table>
-                <button class="btn btn-primary mb-2" onclick="showCreateTaskForm()">Crear Tarea</button>
-                <div class="card-footer text-center">
+                <div class="table-responsive">
+                    <table class="table table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Descripción</th>
+                                <th>Completado</th>
+                                <th>Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="task-table-body">
+                            <!-- Las filas de tareas se agregarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mb-3">
+                    <button class="btn btn-primary" onclick="showCreateTaskForm()">Crear Tarea</button>
                     <button class="btn btn-secondary" onclick="window.location.href='/'">Cerrar Sesión</button>
                 </div>
             </div>
         </div>
         <div id="task-form-container" class="row justify-content-center mt-5" style="display: none;">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="text-center" id="task-form-title">Crear Tarea</h3>
@@ -302,5 +304,5 @@
         }
       }
     </script>
-  </body>
+</body>
 </html>
