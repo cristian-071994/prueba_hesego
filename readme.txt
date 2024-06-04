@@ -1,4 +1,4 @@
-crear bd con archivo hesego.sql
+crear bd con archivo hesego.sql y ajustar en el config.py las credenciales de acceso
 
 usar el comando para instalar el ambiente virual
     pip install virtualenv
